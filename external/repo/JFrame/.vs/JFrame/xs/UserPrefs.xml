@@ -1,0 +1,32 @@
+﻿<Properties StartupConfiguration="{3BADAC48-DC58-4E87-A5D9-CD3D0A3F0FD5}|Unit Tests">
+  <MonoDevelop.Ide.ItemProperties.JFrameMSTest PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="JFrameMSTest/TestAdsManager.cs">
+    <Files>
+      <File FileName="JFrame/Advertisement/AdItem.cs" Line="83" Column="1" />
+      <File FileName="JFrameMSTest/UnitTest1.cs" Line="31" Column="22" />
+      <File FileName="JFrameTest/TestAdManager.cs" Line="45" Column="6" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="JFrame">
+            <Node name="JFrame2.0" expanded="True" />
+            <Node name="JFrameMSTest" selected="True" />
+            <Node name="JFrameTest" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="JFrame" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
+</Properties>

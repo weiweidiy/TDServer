@@ -1,0 +1,35 @@
+[
+  {
+    "Uid":"1",
+    "Group":1,
+    "Rare":1,
+    "Power":100,
+    "Def":90,
+    "Intel":100,
+    "Speed":50,
+    "SoldierUid":"1",
+    "Sex":1
+   },
+  {
+    "Uid":"2",
+    "Group":2,
+    "Rare":2,
+    "Power":100,
+    "Def":90,
+    "Intel":100,
+    "Speed":50,
+    "SoldierUid":"1",
+    "Sex":1
+   },
+  {
+    "Uid":"3",
+    "Group":3,
+    "Rare":3,
+    "Power":100,
+    "Def":90,
+    "Intel":100,
+    "Speed":50,
+    "SoldierUid":"1",
+    "Sex":0
+   }
+]

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "UdeSzCZ7p0k3bm8CD3DwORVsOQ9Yfahy5brDGTfxyejsxJA3giBUqv2yaaHv23xOuKOlV/J7HikUJAF0KIgjbg==",
+  "success": true,
+  "projectFilePath": "D:\\JcwProjects\\JFrame\\JFrame\\JFrame\\ConsoleTest\\ConsoleTest.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\JiChunWei\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
