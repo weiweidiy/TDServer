@@ -9,11 +9,11 @@ using TiktokGame2Server.Entities;
 
 #nullable disable
 
-namespace TiktokGame2Server.Migrations
+namespace TDServer.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250901025453_initCreate")]
-    partial class initCreate
+    [Migration("20260226105749_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

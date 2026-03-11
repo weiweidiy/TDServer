@@ -1,5 +1,7 @@
 ﻿using Game.Share;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Net.NetworkInformation;
 using TiktokGame2Server.Entities;
 using TiktokGame2Server.Others; // 假设TokenService在此命名空间
 
@@ -16,7 +18,6 @@ namespace TiktokGame2Server.Controllers
         TiktokConfigManager tiktokConfigService;
         IHpPoolService hpPoolService;
         IAchievementService achievementService;
-        ISamuraiService samuraiService;
         IRewardService rewardService;
         TiktokNotifyService notifyService;
         ICurrencyService currencyService;
@@ -27,7 +28,6 @@ namespace TiktokGame2Server.Controllers
                             , TiktokConfigManager tiktokConfigService
                             , IHpPoolService hpPoolService
                             , IAchievementService achievementService
-                            , ISamuraiService samuraiService
                             , IRewardService rewardService
                             , TiktokNotifyService notifyService
                             , ICurrencyService currencyService)
@@ -38,7 +38,6 @@ namespace TiktokGame2Server.Controllers
             this.tiktokConfigService = tiktokConfigService;
             this.hpPoolService = hpPoolService;
             this.achievementService = achievementService;
-            this.samuraiService = samuraiService;
             this.rewardService = rewardService;
             this.notifyService = notifyService;
             this.currencyService = currencyService;
@@ -59,47 +58,19 @@ namespace TiktokGame2Server.Controllers
             //需要打的关卡节点ID
             var levelNodeBusinessId = requestFight.LevelNodeBusinessId;
 
-            //检查目标节点，如果levelNode为null，说明关卡节点还没有解锁或者不能打
-            LevelNode? levelNode = null;
-            var valid = await CheckNodeValid(levelNodeBusinessId, playerId, levelNode);
-            if (!valid)
-            {
-                return BadRequest(new { message = "关卡节点未解锁或未完成" });
-            }
+            // 查找空闲端口
+            int port = FindAvailablePort(6000, 7000);
+            Console.WriteLine($"分配给玩家 {accountUid} 的战斗服务器端口: {port}");
 
-            //获取战报
-            var reportData = await CreateCombatReport(levelNodeBusinessId, playerId);
-            if (reportData == null)
-            {
-                return BadRequest(new { message = "战斗数据获取失败" });
-            }
 
-            //更新武将HP和血池
-            var samuraiDTOs = new List<SamuraiDTO>();
-            var hpPoolDTO = new HpPoolDTO();
-            var hpResualt = await UpdateSamuraiHpAndHpPool(reportData, playerUid, playerId, samuraiDTOs, hpPoolDTO);
-            if(!hpResualt)
-            {
-                return BadRequest(new { message = "血池血量不足，无法进行战斗" });
-            }
+            var hpPoolDTO = new HpPoolDTO() { Hp = 10 };      
 
-            //更新节点和奖励
-            RewardDTO? winRewardDTO = new RewardDTO();
-            RewardDTO? achievementRewardDTO = new RewardDTO();
-            var levelNodeDTO = await UpdateLevelNodeAndReward(reportData, playerUid, levelNodeBusinessId, playerId, winRewardDTO, achievementRewardDTO, levelNode);
-            var currenciesDTOs = await GetCurrencies(playerId);
 
             //构造返回的FightDTO
             var responseFight = new ResponseFight()
             {
                 LevelNodeBusinessId = levelNodeBusinessId,
-                LevelNodeDTO = levelNodeDTO,
-                ReportData = reportData,
-                SamuraiDTOs = samuraiDTOs,
-                HpPoolDTO = hpPoolDTO,
-                WinRewardDTO = winRewardDTO,
-                AchievementRewardDTO = achievementRewardDTO,
-                Currencies = currenciesDTOs
+                Port = port
             };
 
             //发送节点更新的通知
@@ -109,6 +80,31 @@ namespace TiktokGame2Server.Controllers
             await notifyService.NotifyHpPoolUpdate(playerId, hpPoolDTO);
 
             return Ok(responseFight);
+        }
+
+        /// <summary>
+        /// 查找指定范围内的可用端口
+        /// </summary>
+        private int FindAvailablePort(int startPort, int endPort)
+        {
+            for (int port = startPort; port <= endPort; port++)
+            {
+                if (IsPortAvailable(port))
+                {
+                    return port;
+                }
+            }
+            throw new Exception("没有可用端口");
+        }
+
+        /// <summary>
+        /// 判断端口是否可用
+        /// </summary>
+        private bool IsPortAvailable(int port)
+        {
+            IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] tcpListeners = ipGlobalProperties.GetActiveTcpListeners();
+            return !tcpListeners.Any(ep => ep.Port == port);
         }
 
         private async Task<List<CurrencyDTO>> GetCurrencies(int playerId)

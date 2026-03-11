@@ -2,5 +2,6 @@
 {
     public class RequestMatch
     {
+        public DateTime RequestTime { get; set; }
     }
 }

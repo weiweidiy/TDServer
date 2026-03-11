@@ -8,7 +8,7 @@ using TiktokGame2Server.Entities;
 
 #nullable disable
 
-namespace TiktokGame2Server.Migrations
+namespace TDServer.Migrations
 {
     [DbContext(typeof(MyDbContext))]
     partial class MyDbContextModelSnapshot : ModelSnapshot

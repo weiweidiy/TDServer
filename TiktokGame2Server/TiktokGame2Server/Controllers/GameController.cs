@@ -71,16 +71,16 @@ namespace TiktokGame2Server.Controllers
                     Uid = playerUid,
                     Username = account.Player?.Name
                 },
-                LevelNodesDTO = await GetLevelNodeDTOs(playerId),
-                SamuraisDTO = await GetSamuraiDTOs(playerId),
-                AtkFormationDTO = await GetFormationDeployDTOs(playerId, tiktokConfigService.GetAtkFormationType()),
-                //DefFormationDTO = await GetFormationDeployDTOs(playerId, tiktokConfigService.GetDefFormationType()),
-                HpPoolDTO = await GetHpPoolDTO(playerId),
-                CurrencyDTO = await GetCurrencyDTO(playerId),
-                BagDTOs = await GetBagDTO(playerId),
-                FormationDTOs = await GetFormationDTOs(playerId),
-                BuildingDTOs = await GetBuildingDTOs(playerId),
-                CurrentGuideBusinessId = await GetCurrentGuideBusinessId(playerId),
+                //LevelNodesDTO = await GetLevelNodeDTOs(playerId),
+                //SamuraisDTO = await GetSamuraiDTOs(playerId),
+                //AtkFormationDTO = await GetFormationDeployDTOs(playerId, tiktokConfigService.GetAtkFormationType()),
+                ////DefFormationDTO = await GetFormationDeployDTOs(playerId, tiktokConfigService.GetDefFormationType()),
+                //HpPoolDTO = await GetHpPoolDTO(playerId),
+                //CurrencyDTO = await GetCurrencyDTO(playerId),
+                //BagDTOs = await GetBagDTO(playerId),
+                //FormationDTOs = await GetFormationDTOs(playerId),
+                //BuildingDTOs = await GetBuildingDTOs(playerId),
+                //CurrentGuideBusinessId = await GetCurrentGuideBusinessId(playerId),
                 ServerTime = GetServerTime()
             };
 

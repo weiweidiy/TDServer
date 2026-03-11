@@ -60,7 +60,7 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddSwaggerWithJwt(); //自定义扩展方法，为 Swagger 添加 JWT 支持
 builder.Services.AddSignalR();
 
-builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql("Server=localhost;Port=5432;Database=MyDb;UserId=postgres;Password=123321qweasd;"));
+builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql("Server=localhost;Port=5432;Database=MyDb2;UserId=postgres;Password=123321qweasd;"));
 
 
 builder.Services.AddSingleton<IDeserializer, JsonNetDeserilizer>();
@@ -93,6 +93,7 @@ builder.Services.AddSingleton<JFramework.ILogger, ConsoleLogger>();
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddHostedService<TimedTaskService>();
+builder.Services.AddHostedService<JNetworkServer>();
 
 
 // 添加日志（默认已包含Console、Debug等）

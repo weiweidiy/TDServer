@@ -5,6 +5,8 @@
     {
         public required string LevelNodeBusinessId { get; set; }
 
+        public int Port { get; set; }
+
         public TiktokJCombatTurnBasedReportData? ReportData { get; set; }
 
         public  LevelNodeDTO? LevelNodeDTO { get; set; }
