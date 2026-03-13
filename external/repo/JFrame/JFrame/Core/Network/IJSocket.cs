@@ -2,7 +2,7 @@
 
 namespace JFramework
 {
-    public interface IJSocket
+    public interface IJSocket :  ICloneable
     {
         event Action<IJSocket> onOpen;
         event Action<IJSocket, SocketStatusCodes, string> onClosed;

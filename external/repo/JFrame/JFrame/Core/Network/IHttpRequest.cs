@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace JFramework
 {
-    public interface IHttpRequest
+    public interface IHttpRequest 
     {
         byte[] Post(string url, Dictionary<string, string> dic, Encoding encoding = null);
 
@@ -26,7 +27,10 @@ namespace JFramework
 
         void AddHeader(string name, string value);
 
+        void RemoveHeader(string name);
+
         void SetContentType(string contentType);
 
+        Task<TResponse> HttpRequestAsync<TRequest, TResponse>(string url, TRequest requestData, Encoding encoding = null, IRunable runable = null);
     }
 }

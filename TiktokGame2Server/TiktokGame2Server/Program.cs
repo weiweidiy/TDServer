@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
+using TDRoom;
 using TiktokGame2Server.Entities;
 using TiktokGame2Server.Others;
 
@@ -66,6 +67,9 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql("Server=
 builder.Services.AddSingleton<IDeserializer, JsonNetDeserilizer>();
 builder.Services.AddSingleton<IConfigLoader, LocalFileConfigLoader>();
 builder.Services.AddSingleton<TiktokConfigManager>();
+builder.Services.AddSingleton<IDataConverter, JsonNetDataConverter>();
+builder.Services.AddSingleton<RoomServerProcess>();
+builder.Services.AddSingleton<INetworkMessageHandler, RoomServerProcess>();
 
 
 builder.Services.AddScoped<ITokenService, TokenService>();

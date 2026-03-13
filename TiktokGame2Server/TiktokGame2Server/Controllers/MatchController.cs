@@ -1,9 +1,10 @@
 using Game.Share;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Matching;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
+using TDRoom;
 using TiktokGame2Server.Others;
 
 namespace TiktokGame2Server.Controllers
@@ -18,12 +19,29 @@ namespace TiktokGame2Server.Controllers
 
         ITokenService tokenService;
         TiktokNotifyService notifyService;
+        RoomServerProcess roomServerProcess;
 
-        public MatchController(ITokenService tokenService, TiktokNotifyService notifyService)
+        public MatchController(ITokenService tokenService, TiktokNotifyService notifyService, RoomServerProcess roomServerProcess)
         {
             this.tokenService = tokenService;
             this.notifyService = notifyService;
+            this.roomServerProcess = roomServerProcess;
+            this.roomServerProcess.onRoomReady += RoomServerProcess_onRoomReady;
         }
+
+        private void RoomServerProcess_onRoomReady(RoomProcessData data)
+        {
+            var startFightNtf = new StartFightNtf();
+            startFightNtf.Port = data.port;
+            if(data.players == null || data.players.Length == 0)
+                throw new Exception($"房间 {data.roomId} 玩家列表不能为空");
+
+            foreach (var p in data.players)
+            {
+                notifyService.SendNotificationAsync(p.PlayerId, startFightNtf);
+            }
+        }
+
 
         [HttpPost("Match")]
         public async Task<IActionResult> Match([FromBody] RequestMatch request)
@@ -53,23 +71,29 @@ namespace TiktokGame2Server.Controllers
             if (candidates.Count == MatchCount)
             {
                 // 从队列移除这些玩家
-                foreach (var p in candidates)
-                    waitingPlayers.TryDequeue(out _);
-
-                ushort port = FindAvailablePort(6000, 7000);
-                usedPorts[port] = true;
-
-                var process = new RoomServerProcess().StartServerWithVisibleWindow(
-                    Guid.NewGuid().ToString(), port, "E:\\UnityProjects\\TDGame\\TDRoom\\Bin\\TDFor4P.exe", "", MatchCount);
-
-                var startFightNtf = new StartFightNtf();
-                startFightNtf.Port = port;
-
+                var players = new List<MatchPlayer>();
                 foreach (var p in candidates)
                 {
-                    // 推送消息放到后台任务，避免阻塞响应
-                    Task.Run(() => notifyService.SendNotificationAsync(p.PlayerId, startFightNtf));
+                    waitingPlayers.TryDequeue(out _);
+                    players.Add(p);
                 }
+                    
+                ushort port = FindAvailablePort(6000, 7000);
+                usedPorts[port] = true;
+                var roomId = Guid.NewGuid().ToString();
+
+                RoomProcessData data = new RoomProcessData
+                {
+                    roomId = roomId,
+                    port = port,
+                    players = players.ToArray()
+                };
+                // 启动房间服务器
+                roomServerProcess.StartServerWithVisibleWindow(data, "E:\\UnityProjects\\TDGame\\TDRoom\\Bin\\TDFor4P.exe",  MatchCount);
+
+                //to do: 等待JNetworkServer接收到该roomId的消息后，才发送StartFightNtf通知玩家连接房间服务器
+
+                
 
                 var res = new ResponseMatch()
                 {
@@ -120,51 +144,6 @@ namespace TiktokGame2Server.Controllers
         public string PlayerUid { get; set; } = string.Empty;
         public int Level { get; set; }
         public DateTime RequestTime { get; set; }
-    }
-
-    public class RoomServerProcess
-    {
-        public Process? StartServerWithVisibleWindow(string roomId, int port, string path, string args, int matchCount)
-        {
-            string? workingDir = Path.GetDirectoryName(path);
-
-            var processInfo = new ProcessStartInfo
-            {
-                FileName = path,
-                Arguments = $"-roomId {roomId} -port {port} -maxPlayers {matchCount} " +
-                            "-batchmode -nographics -logFile \"\"",
-                UseShellExecute = true,
-                CreateNoWindow = false,
-                WindowStyle = ProcessWindowStyle.Normal,
-                WorkingDirectory = workingDir
-            };
-            return Process.Start(processInfo);
-        }
-
-        /// <summary>
-        /// 停止房间进程
-        /// </summary>
-        public void Stop(Process process)
-        {
-            if (process != null && !process.HasExited)
-            {
-                try
-                {
-                    // 优先尝试关闭主窗口（如果有）
-                    if (!process.CloseMainWindow())
-                    {
-                        // 如果没有主窗口或未响应，则强制杀死
-                        process.Kill();
-                    }
-                    process.WaitForExit(3000); // 最多等待3秒
-                }
-                catch
-                {
-                    // 忽略异常
-                    throw;
-                }
-            }
-        }
     }
 
 }

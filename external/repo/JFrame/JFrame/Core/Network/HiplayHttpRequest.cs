@@ -349,6 +349,15 @@ namespace JFramework
         }
 
         /// <summary>
+        /// 删除header
+        /// </summary>
+        /// <param name="name"></param>
+        public void RemoveHeader(string name)
+        {
+            _headers.Remove(name);
+        }
+
+        /// <summary>
         /// 设置类型
         /// </summary>
         /// <param name="contentType"></param>
@@ -356,6 +365,23 @@ namespace JFramework
         {
             _contentType = contentType;
         }
+
+        /// <summary>
+        /// rpc风格请求，输入输出都是对象，内部会自动序列化和反序列化
+        /// </summary>
+        /// <typeparam name="TRequest"></typeparam>
+        /// <typeparam name="TResponse"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="requestData"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual Task<TResponse> HttpRequestAsync<TRequest, TResponse>(string url, TRequest requestData, Encoding encoding = null, IRunable runable = null)
+        {
+            return Task.FromResult(default(TResponse));
+        }
+
+
 
         #endregion
 

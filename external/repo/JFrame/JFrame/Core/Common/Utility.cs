@@ -164,18 +164,26 @@ namespace JFramework
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T DeepClone<T>(T obj)
+        public T DeepClone<T>(T obj, bool isAll = false)
         {
-            //using (MemoryStream ms = new MemoryStream())
-            //{
-            //    IFormatter formatter = new BinaryFormatter();
-            //    formatter.Serialize(ms, obj);
-            //    ms.Seek(0, SeekOrigin.Begin);
-            //    return (T)formatter.Deserialize(ms);
-            //}
+
             if (obj == null) return default(T);
-            var json = JsonConvert.SerializeObject(obj);
-            return JsonConvert.DeserializeObject<T>(json);
+
+            if(!isAll)
+            {
+                var json = JsonConvert.SerializeObject(obj);
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            else
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All, // 保留类型信息
+                    Formatting = Formatting.None
+                };
+                string json = JsonConvert.SerializeObject(obj, settings);
+                return JsonConvert.DeserializeObject<T>(json, settings);
+            }
         }
 
         /// <summary>

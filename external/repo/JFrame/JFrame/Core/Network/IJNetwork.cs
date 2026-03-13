@@ -10,7 +10,7 @@ namespace JFramework
         NormalClosure
     }
 
-    public interface IJNetwork
+    public interface IJNetwork : IJNetworkable
     {
         event Action onOpen;
         event Action<SocketStatusCodes, string> onClose;
@@ -19,7 +19,13 @@ namespace JFramework
         event Action<string> onError;
 
         IJSocket Socket { get; }
+    }
 
+    /// <summary>
+    /// 可链接通信的接口
+    /// </summary>
+    public interface IJNetworkable
+    {
         Task Connect(string url, string token = null);
 
         void Disconnect();

@@ -44,9 +44,14 @@ namespace JFramework
         IJTaskCompletionSourceManager<IUnique> taskManager = null;
 
         /// <summary>
-        /// 消息处理策略
+        /// 消息处理策略(加密，压缩等)
         /// </summary>
         INetworkMessageProcessStrate messageProcessStrate = null;
+
+        /// <summary>
+        /// 消息处理器，处理业务逻辑
+        /// </summary>
+        INetworkMessageHandler messageHandler = null;
 
 
         #region 公开接口
@@ -175,24 +180,27 @@ namespace JFramework
         /// <param name="data"></param>
         public void Socket_OnBinary(IJSocket s, byte[] data)
         {
-            var obj = GetNetworkMessageProcessStrate().ProcessComingMessage(data);
+            var message = GetNetworkMessageProcessStrate().ProcessComingMessage(data);
 
             try
             {
                 //如果没有tcs，那可能是一个推送消息
-                var tcs = GetTaskManager().GetTask(obj.Uid);
+                var tcs = GetTaskManager().GetTask(message.Uid);
                 if (tcs != null)
                 {
-                    tcs.TrySetResult(obj); // 完成等待的任务
+                    tcs.TrySetResult(message); // 完成等待的任务
                 }
             }
             catch (Exception ex)
             {
                 // 处理解析错误
                 Console.WriteLine($"Error parsing message: {ex.Message}");
+                throw;
             }
 
-            onMessage?.Invoke(obj);
+            //优先处理消息
+            messageHandler?.Handle(message);
+            onMessage?.Invoke(message);
 
         }
 
@@ -266,11 +274,13 @@ namespace JFramework
         public INetworkMessageProcessStrate GetNetworkMessageProcessStrate() => messageProcessStrate;
 
 
-        public JNetwork(ISocketFactory socketFactory, IJTaskCompletionSourceManager<IUnique> taskManager, INetworkMessageProcessStrate messageProcessStrate)
+
+        public JNetwork(ISocketFactory socketFactory, IJTaskCompletionSourceManager<IUnique> taskManager, INetworkMessageProcessStrate messageProcessStrate, INetworkMessageHandler messageHandler)
         {
             this.socketFactory = socketFactory;
             this.taskManager = taskManager;
             this.messageProcessStrate = messageProcessStrate;
+            this.messageHandler = messageHandler;
         }
     }
 }
