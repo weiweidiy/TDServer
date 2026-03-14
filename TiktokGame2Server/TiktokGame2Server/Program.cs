@@ -68,8 +68,11 @@ builder.Services.AddSingleton<IDeserializer, JsonNetDeserilizer>();
 builder.Services.AddSingleton<IConfigLoader, LocalFileConfigLoader>();
 builder.Services.AddSingleton<TiktokConfigManager>();
 builder.Services.AddSingleton<IDataConverter, JsonNetDataConverter>();
+// 只注册 RoomServerProcess 单例
 builder.Services.AddSingleton<RoomServerProcess>();
-builder.Services.AddSingleton<INetworkMessageHandler, RoomServerProcess>();
+
+// 让 INetworkMessageHandler 解析为同一个 RoomServerProcess 实例
+builder.Services.AddSingleton<INetworkMessageHandler>(sp => sp.GetRequiredService<RoomServerProcess>());
 
 
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -96,7 +99,7 @@ builder.Services.AddSingleton<JFramework.ILogger, ConsoleLogger>();
 
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
-builder.Services.AddHostedService<TimedTaskService>();
+//builder.Services.AddHostedService<TimedTaskService>();
 builder.Services.AddHostedService<JNetworkServer>();
 
 

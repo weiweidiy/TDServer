@@ -22,6 +22,7 @@ namespace TDRoom
         {
             this.port = port;
             this.serviceProvider = serviceProvider;
+            Console.WriteLine(handler.GetHashCode());
             var typeRegister = new ServerTypeRegister();
             var typeResolver = new JNetMessageJsonTypeResolver(dataConverter, typeRegister);
             this.msgProcessStrate = new JNetworkMessageProcessStrate(new JNetMessageJsonSerializerStrate(dataConverter), typeResolver, null, null);

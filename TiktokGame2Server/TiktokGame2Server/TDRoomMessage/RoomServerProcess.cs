@@ -35,6 +35,8 @@ namespace TDRoom
                     onRoomReady?.Invoke(roomDataMap[req.RoomId]);
 
                     roomDataMap.Remove(req.RoomId);
+
+                    Console.WriteLine($"房间 {req.RoomId} 准备就绪，触发 onRoomReady 事件");
                     break;
             }
         }
@@ -62,10 +64,12 @@ namespace TDRoom
             string? workingDir = Path.GetDirectoryName(path);
             string playerIdsArg = $"-playerIds {string.Join(",", playerIds)}";
 
+            Console.WriteLine($"启动房间服务器进程，路径: {path}, 参数: -roomId {roomId} -port {port} -maxPlayers {matchCount} {playerIdsArg}");
+
             var processInfo = new ProcessStartInfo
             {
                 FileName = path,
-                Arguments = $"-roomId {roomId} -port {port} -maxPlayers {matchCount} {playerIdsArg}" +
+                Arguments = $"-roomId {roomId} -port {port} -maxPlayers {matchCount} {playerIdsArg} " +
                             "-batchmode -nographics -logFile \"\"",
                 UseShellExecute = true,
                 CreateNoWindow = false,

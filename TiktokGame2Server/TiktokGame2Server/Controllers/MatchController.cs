@@ -26,6 +26,8 @@ namespace TiktokGame2Server.Controllers
             this.tokenService = tokenService;
             this.notifyService = notifyService;
             this.roomServerProcess = roomServerProcess;
+
+            Console.WriteLine(roomServerProcess.GetHashCode());
             this.roomServerProcess.onRoomReady += RoomServerProcess_onRoomReady;
         }
 
@@ -80,7 +82,7 @@ namespace TiktokGame2Server.Controllers
                     
                 ushort port = FindAvailablePort(6000, 7000);
                 usedPorts[port] = true;
-                var roomId = Guid.NewGuid().ToString();
+                var roomId = "room_001";
 
                 RoomProcessData data = new RoomProcessData
                 {
