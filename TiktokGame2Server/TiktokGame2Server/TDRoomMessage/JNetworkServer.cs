@@ -107,7 +107,12 @@ namespace TDRoom
                     {
                         return new ResRoomReady() { Code = 0 };
                     }
-                    
+                case (int)TDRoomProtocolType.ReqPlayerData:
+                    {
+                        var req = jNetMessage as ReqPlayerData;
+                        return new ResPlayerData() { PlayerId = req.PlayerId, PlayerName = $"Player{req.PlayerId}" };
+                    }
+
                 default:
                     throw new NotImplementedException("没有实现消息处理 msgTypeId:" + jNetMessage.TypeId);
             }

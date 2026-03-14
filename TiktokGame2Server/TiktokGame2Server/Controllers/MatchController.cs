@@ -26,22 +26,6 @@ namespace TiktokGame2Server.Controllers
             this.tokenService = tokenService;
             this.notifyService = notifyService;
             this.roomServerProcess = roomServerProcess;
-
-            Console.WriteLine(roomServerProcess.GetHashCode());
-            this.roomServerProcess.onRoomReady += RoomServerProcess_onRoomReady;
-        }
-
-        private void RoomServerProcess_onRoomReady(RoomProcessData data)
-        {
-            var startFightNtf = new StartFightNtf();
-            startFightNtf.Port = data.port;
-            if(data.players == null || data.players.Length == 0)
-                throw new Exception($"房间 {data.roomId} 玩家列表不能为空");
-
-            foreach (var p in data.players)
-            {
-                notifyService.SendNotificationAsync(p.PlayerId, startFightNtf);
-            }
         }
 
 
@@ -82,7 +66,7 @@ namespace TiktokGame2Server.Controllers
                     
                 ushort port = FindAvailablePort(6000, 7000);
                 usedPorts[port] = true;
-                var roomId = "room_001";
+                var roomId = Guid.NewGuid().ToString();
 
                 RoomProcessData data = new RoomProcessData
                 {
@@ -93,9 +77,7 @@ namespace TiktokGame2Server.Controllers
                 // 启动房间服务器
                 roomServerProcess.StartServerWithVisibleWindow(data, "E:\\UnityProjects\\TDGame\\TDRoom\\Bin\\TDFor4P.exe",  MatchCount);
 
-                //to do: 等待JNetworkServer接收到该roomId的消息后，才发送StartFightNtf通知玩家连接房间服务器
-
-                
+                //to do: 等待JNetworkServer接收到该roomId的消息后，才发送StartFightNtf通知玩家连接房间服务器            
 
                 var res = new ResponseMatch()
                 {
@@ -106,7 +88,8 @@ namespace TiktokGame2Server.Controllers
             }
             else
             {
-                await Task.Delay(5000); // 5秒等待
+
+                await Task.Delay(50000); // 50秒等待
                 if (waitingPlayers.Contains(self))
                 {
                     waitingPlayers.TryDequeue(out _);

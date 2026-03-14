@@ -1,6 +1,10 @@
-using System.Diagnostics;
+using Game.Share;
 using JFramework;
+using System.Diagnostics;
 using TiktokGame2Server.Controllers;
+using TiktokGame2Server.Entities;
+using TiktokGame2Server.Others;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace TDRoom
 {
     /// <summary>
@@ -18,12 +22,21 @@ namespace TDRoom
     /// </summary>
     public class RoomServerProcess : INetworkMessageHandler
     {
-        public event Action<RoomProcessData> onRoomReady;
+        public event Action<RoomProcessData>? onRoomReady;
 
         Dictionary<string, RoomProcessData> roomDataMap = new Dictionary<string, RoomProcessData>();
+        private readonly IServiceProvider _serviceProvider;
+
+        public RoomServerProcess(IServiceProvider serviceProvider)
+        {
+            this._serviceProvider = serviceProvider;
+        }
 
         public void Handle(IJNetMessage message)
         {
+            using var scope = _serviceProvider.CreateScope();
+            var notifyService = scope.ServiceProvider.GetRequiredService<TiktokNotifyService>();
+
             switch (message.TypeId)
             {
                 case (int)TDRoomProtocolType.ReqRoomReady:
@@ -32,7 +45,19 @@ namespace TDRoom
                     if (!roomDataMap.ContainsKey(req.RoomId))
                         throw new Exception($"房间 {req.RoomId} 不存在");
 
-                    onRoomReady?.Invoke(roomDataMap[req.RoomId]);
+                    var data = roomDataMap[req.RoomId];
+                    var startFightNtf = new StartFightNtf();
+                    startFightNtf.Port = data.port;
+                    if (data.players == null || data.players.Length == 0)
+                        throw new Exception($"房间 {data.roomId} 玩家列表不能为空");
+
+
+                    foreach (var p in data.players)
+                    {
+
+                        notifyService.SendNotificationAsync(p.PlayerId, startFightNtf);
+                        Console.WriteLine("send to user : " + p.PlayerId);
+                    }
 
                     roomDataMap.Remove(req.RoomId);
 
