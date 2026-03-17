@@ -20,7 +20,7 @@ namespace TDRoom
     /// <summary>
     /// 处理启动房间服务器进程的逻辑，监听房间准备就绪的消息，并触发 onRoomReady 事件。提供 StartServerWithVisibleWindow 方法启动进程，Stop 方法停止进程。
     /// </summary>
-    public class RoomServerProcess : INetworkMessageHandler
+    public class RoomServerProcess : INetworkServerMessageHandler
     {
         public event Action<RoomProcessData>? onRoomReady;
 
@@ -32,7 +32,7 @@ namespace TDRoom
             this._serviceProvider = serviceProvider;
         }
 
-        public void Handle(IJNetMessage message)
+        public Task<IJNetMessage> Handle(IJNetMessage message)
         {
             using var scope = _serviceProvider.CreateScope();
             var notifyService = scope.ServiceProvider.GetRequiredService<TiktokNotifyService>();
@@ -61,8 +61,16 @@ namespace TDRoom
 
                     roomDataMap.Remove(req.RoomId);
 
+                    var res = new ResRoomReady() { Code = 0 };
                     Console.WriteLine($"房间 {req.RoomId} 准备就绪，触发 onRoomReady 事件");
-                    break;
+                    return Task.FromResult<IJNetMessage>(res);
+                case (int)TDRoomProtocolType.ReqPlayerData:
+                    var reqPlayerData = message as ReqPlayerData;
+                    var playerId = reqPlayerData.PlayerId;
+                    var playerData = new ResPlayerData() { PlayerId = playerId, PlayerName = $"玩家{playerId}" };
+                    return Task.FromResult<IJNetMessage>(playerData);
+                default:
+                    throw new Exception($"未知的消息类型: {message.TypeId}");
             }
         }
 

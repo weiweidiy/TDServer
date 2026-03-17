@@ -8,7 +8,6 @@ using System.Net.WebSockets;
 //using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace JFramework
@@ -245,7 +244,7 @@ namespace JFramework
             socket.onOpen += (s) => { Socket_OnOpen(s, tcs); };
             socket.onClosed += (s, code, message) => { Socket_OnClose(s, code, message); };
             socket.onBinary += (s, data) => { Socket_OnBinary(s, data); };
-            //socket.onMessage += (s, message) => { Socket_OnMessage(s, message); };
+            //socketListener.onMessage += (s, message) => { Socket_OnMessage(s, message); };
             socket.onError += (s, message) => { Scoket_OnError(s, message, tcs); };
         }
 

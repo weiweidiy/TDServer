@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Threading;
-
-//using System.Reactive.Linq;
-//using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
 namespace JFramework
 {
-
+    /// <summary>
+    /// taskCompletionSource管理器，负责管理所有未完成的任务
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class JTaskCompletionSourceManager<T> : IJTaskCompletionSourceManager<T>
     {
 

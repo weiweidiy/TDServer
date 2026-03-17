@@ -1,4 +1,6 @@
 ﻿namespace JFramework
 {
-    public interface IJNetMessage : IUnique, ITypeId { }
+    public interface IJNetMessage : IUnique, ITypeId {
+        string Token { get; }
+    }
 }

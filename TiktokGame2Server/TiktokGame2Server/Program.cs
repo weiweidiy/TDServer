@@ -70,9 +70,19 @@ builder.Services.AddSingleton<TiktokConfigManager>();
 builder.Services.AddSingleton<IDataConverter, JsonNetDataConverter>();
 // 只注册 RoomServerProcess 单例
 builder.Services.AddSingleton<RoomServerProcess>();
-
 // 让 INetworkMessageHandler 解析为同一个 RoomServerProcess 实例
-builder.Services.AddSingleton<INetworkMessageHandler>(sp => sp.GetRequiredService<RoomServerProcess>());
+builder.Services.AddSingleton<INetworkServerMessageHandler>(sp => sp.GetRequiredService<RoomServerProcess>());
+//socket 相关
+//List<IProcesser> processers = new List<IProcesser>();
+//builder.Services.AddSingleton<List<IProcesser>>(processers);
+//builder.Services.AddSingleton<JDataProcesserManager>();
+builder.Services.AddSingleton<ITypeRegister, ServerTypeRegister>();
+//builder.Services.AddSingleton<IMessageTypeResolver, JNetMessageJsonTypeResolver>();
+//builder.Services.AddSingleton<INetMessageSerializerStrate, JNetMessageJsonSerializerStrate>();
+//builder.Services.AddSingleton<INetworkMessageProcessStrate, JNetworkMessageProcessStrate>();
+//builder.Services.AddSingleton<IJNetworkServer, GameNetworkServer>();
+
+
 
 
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -100,7 +110,7 @@ builder.Services.AddSingleton<JFramework.ILogger, ConsoleLogger>();
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 //builder.Services.AddHostedService<TimedTaskService>();
-builder.Services.AddHostedService<JNetworkServer>();
+builder.Services.AddHostedService<TDRoomNetworkService>();
 
 
 // 添加日志（默认已包含Console、Debug等）
