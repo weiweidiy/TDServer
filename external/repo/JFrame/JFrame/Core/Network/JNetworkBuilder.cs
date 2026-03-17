@@ -58,7 +58,7 @@ namespace JFramework
 
             if (protocolRegister == null)
             {
-                //protocolRegister = new DefaultTypeRegister();
+                throw new System.Exception("Protocol register is required. Please set it using SetProtocolRegister method.");
             }
 
             if (messageTypeResolver == null)
@@ -74,6 +74,11 @@ namespace JFramework
             if (comingProcesserManager == null)
             {
                 //comingProcesserManager = new JDataProcesserManager();
+            }
+
+            if(networkMessageHandler == null)
+            {
+                throw new System.Exception("Message handler is required. Please set it using SetMessageHandler method.");
             }
 
             if (networkMessageProcessStrate == null)

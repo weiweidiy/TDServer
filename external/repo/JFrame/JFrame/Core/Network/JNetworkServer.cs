@@ -113,6 +113,7 @@ namespace JFramework
 
             //优先处理消息
             var responseMessage = await messageServerMessageHandler?.Handle(message);
+            (responseMessage as JNetMessage).Uid = message.Uid; // 将请求消息的Uid原封不动地返回给客户端，以便客户端能够正确匹配响应
 
             var buffer = GetNetworkMessageProcessStrate().ProcessOutMessage(responseMessage);
             Send(clientId, buffer);

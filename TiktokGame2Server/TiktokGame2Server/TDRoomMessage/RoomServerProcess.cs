@@ -61,13 +61,13 @@ namespace TDRoom
 
                     roomDataMap.Remove(req.RoomId);
 
-                    var res = new ResRoomReady() { Code = 0 };
+                    var res = new ResRoomReady() { Uid = message.Uid, Code = 0 };
                     Console.WriteLine($"房间 {req.RoomId} 准备就绪，触发 onRoomReady 事件");
                     return Task.FromResult<IJNetMessage>(res);
                 case (int)TDRoomProtocolType.ReqPlayerData:
                     var reqPlayerData = message as ReqPlayerData;
                     var playerId = reqPlayerData.PlayerId;
-                    var playerData = new ResPlayerData() { PlayerId = playerId, PlayerName = $"玩家{playerId}" };
+                    var playerData = new ResPlayerData() { Uid = message.Uid, PlayerId = playerId, PlayerName = $"玩家{playerId}" };
                     return Task.FromResult<IJNetMessage>(playerData);
                 default:
                     throw new Exception($"未知的消息类型: {message.TypeId}");
