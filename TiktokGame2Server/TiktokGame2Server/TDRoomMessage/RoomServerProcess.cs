@@ -67,7 +67,8 @@ namespace TDRoom
                 case (int)TDRoomProtocolType.ReqPlayerData:
                     var reqPlayerData = message as ReqPlayerData;
                     var playerId = reqPlayerData.PlayerId;
-                    var playerData = new ResPlayerData() { Uid = message.Uid, PlayerId = playerId, PlayerName = $"玩家{playerId}" };
+                    var playerData = new ResPlayerData() { Uid = message.Uid, PlayerId = playerId, PlayerName = $"playerName: {playerId}" };
+                    Console.WriteLine("ReqPlayerData: " + playerId + " time: " + DateTime.Now);
                     return Task.FromResult<IJNetMessage>(playerData);
                 default:
                     throw new Exception($"未知的消息类型: {message.TypeId}");
@@ -92,7 +93,7 @@ namespace TDRoom
             if(roomId == null)
                 throw new Exception($"房间 {roomId} 房间ID不能为空");
 
-            var playerIds = data.players.Select(p => p.PlayerId).ToArray();
+            var playerIds = data.players.Select(p => p.PlayerUid).ToArray();
 
             string? workingDir = Path.GetDirectoryName(path);
             string playerIdsArg = $"-playerIds {string.Join(",", playerIds)}";

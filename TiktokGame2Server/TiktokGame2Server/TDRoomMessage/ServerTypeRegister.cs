@@ -30,14 +30,14 @@ namespace TDRoom
     {
         public override string Uid { get; set; } = Guid.NewGuid().ToString();
         public override int TypeId { get => (int)TDRoomProtocolType.ReqPlayerData; }
-        public int PlayerId { get; set; }
+        public string PlayerId { get; set; }
     }
 
     public class ResPlayerData : JNetMessage
     {
         public override string Uid { get; set; } = Guid.NewGuid().ToString();
         public override int TypeId { get => (int)TDRoomProtocolType.ResPlayerData; }
-        public int PlayerId { get; set; }
+        public string PlayerId { get; set; }
         public string PlayerName { get; set; } = string.Empty;
     }
 
